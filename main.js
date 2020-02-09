@@ -31,7 +31,9 @@ client.on('message', async (message) => {
     const args = message.content.trim().split(/ +/g);
     switch (args[0]) {
         case '!canal':
-
+            if(!message.member.hasPermission('MANAGE_GUILD')){
+                return;
+            }
             if (!message.guild.channels.get(args[1]))
                 return message.channel.send('Debes proporcionar una ID de canal válida');
 
