@@ -5,7 +5,6 @@ let file;
 let pathto;
 let toquery;
 
-
     if (conf.dbnombre !== "") {
         pathto = './' + conf.dbnombre + '.yaml';
         if(!fs.existsSync(pathto))
@@ -68,11 +67,21 @@ client.on('message', async (message) => {
                 await deletestring(message.guild.id);
                 return message.channel.send('Añade el canal al que enviar las sugerencias con el comando !canal {chID}')
             }
-
-            let sugerencia = "";
-            for (let i = 1; i < args.length; i++) {
-               sugerencia += args[i] + " "
+            if(!args[1]) {
+                return message.channel.send("Debes añadir un motivo a la sugerencia");
             }
+            let sugerencia = args.slice(1).join(" ");
+            let sugData = {
+                user: message.author.tag,
+                userID: message.author.id,
+                messageID: message.id,
+                suggestion: sugerencia
+            }
+            let regSug = JSON.stringify(sugData);
+             if(!fs.existsSync("suggestions.json"))
+            fs.appendFileSync("suggestions.json", regSug);
+            else
+            fs.appendFileSync("suggestions.json", ",\n" + regSug);
             await console.log(sugerencia);
             let embed = await new Discord.RichEmbed()
                 .setColor('#bfff00')
@@ -130,5 +139,3 @@ function deletestring(guildID,args, bool){
 
 
 client.login(conf.token);
-
-
