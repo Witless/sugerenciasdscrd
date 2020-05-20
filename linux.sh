@@ -11,5 +11,5 @@ echo "{
   \"prefix\": \"$bot_prefix\",
   \"channel\": \"$suggestions_chnl\"
 }" > config.json
-echo "Archivo de configuracion creado correctamente.."
+echo "Archivo de configuracion creado correctamente."
   
