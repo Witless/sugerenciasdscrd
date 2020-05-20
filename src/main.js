@@ -25,7 +25,7 @@ client.on('message', async msg => {
         .setTitle('Nueva Sugerencia')
         .setColor('BLUE')
         .setDescription(args.join(' '));
-      const message = await msg.channel.send(embed);
+      const message = await channel.send(embed);
       db.set(message.id, {
         message: message.id,
         content: args.join(' '),
