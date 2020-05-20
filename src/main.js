@@ -2,7 +2,7 @@ const { Client, MessageEmbed } = require('discord.js');
 const client = new Client();
 const config = require('../config.json');
 const DB = require('simple-json-db');
-const db = new DB('../suggestions.json');
+const db = new DB('./suggestions.json');
 
 client.on('ready', () => {
   console.log(`${client.user.tag} ha sido encendido.`);
