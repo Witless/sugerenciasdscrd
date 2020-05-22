@@ -148,6 +148,8 @@ client.on("message", async (msg) => {
           "No he podido quitar las reacciones del mensaje, por favor, comprueba mis permisos, necesito poder administrar mensajes."
         );
       break;
+    default:
+      return;
   }
   msg.react("✅");
 });
