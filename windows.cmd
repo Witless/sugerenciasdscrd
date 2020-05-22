@@ -15,6 +15,5 @@ set /p suggestions_chnl=""
 echo   "channel": "%suggestions_chnl%" >> config.json
 
 echo } >> config.json
-echo {} > suggestions.json
 echo Archivo de configuracion correctamente creado.
 pause

@@ -2,34 +2,25 @@
 
 Suggest es un bot dedicado a enviar sugerencias a un canal definido en un servidor de Discord
 
-## Instalación
+## Instalación y Uso
 
-Usa el controlador de paquetes de node
-
-```
-npm i -y 
-```
-
-## Uso
-
-En el fichero ``config.json`` podrás: 
-
-- Añadir el token del bot (nesesario)
-- Definir el nombre del fichero dónde se guardarán los datos
-
-Una vez rellenado el fichero ``config.json`` podrás iniciar el bot con 
-```bash
-node Main.js
-```
+1. Haz fork del repositorio y clónalo a tu dispositivo.
+2. Usa el comando `npm i` en la terminal (carpeta del bot).
+3. Usa el comando `npm run windows` o `npm run linux` dependiendo de tu SO. Después introduce los datos requeridos.
+4. Arranca el bot con `node .` o si usas PM2, con `pm2 start src/index.js --name suggest`.
 
 ## Comandos
 
-**!canal** {IDCanal} | Añade el canal dónde quieres que se envíen las sugerencias
+Recuerda usar delante del comando el prefix configurado.
 
-**!sugerir** {Sugerencia} | Envía una nueva sugerencia
+- **sugerir {Contenido de la Sugerencia}** | Manda la sugerencia.
+- **aceptar {ID del Mensaje} [Razón]** | Acepta la sugerencia.
+- **posible {ID del Mensaje} [Razón]** | Marca la sugerencia como posible.
+- **rechazar {ID del Mensaje} [Razón]** | Rechaza la sugerencia.
 
 ## Contribución
-Este bot está hecho en aprox. 2 horas, por lo que cualquier ayuda es muy agradecida, los Pull Requests son bienvenidos <3
+Este bot está hecho en aproximadamente 2 horas, por lo que cualquier ayuda es muy agradecida.
+Los Pull Requests son bienvenidos <3
 
 ## Licencia
 [MIT](https://choosealicense.com/licenses/mit/)
