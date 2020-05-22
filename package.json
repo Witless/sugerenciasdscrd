@@ -1,10 +1,12 @@
 {
   "name": "sugerenciasdscrd",
-  "version": "1.0.0",
-  "description": "",
+  "version": "1.0.1",
+  "description": "Bot de sugerencias.",
   "main": "src/main.js",
   "scripts": {
-    "run": "node src/main.js"
+    "run": "node src/main.js",
+    "windows": "windows.cmd",
+    "linux": "bash linux.sh"
   },
   "repository": {
     "type": "git",
