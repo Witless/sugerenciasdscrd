@@ -1,141 +1,146 @@
-const fs = require('fs');
-const YAML = require('yaml');
-const conf = require('./conf.json');
-let file;
-let pathto;
-let toquery;
-
-    if (conf.dbnombre !== "") {
-        pathto = './' + conf.dbnombre + '.yaml';
-        if(!fs.existsSync(pathto))
-            fs.appendFileSync(pathto, 'svch:');
-        loadfile();
-        file = YAML.parse(fs.readFileSync(pathto, 'utf8'));
-    } else {
-        pathto = './datach.yaml';
-        if(!fs.existsSync(pathto))
-            fs.appendFileSync(pathto, 'svch:');
-        loadfile();
-        file = YAML.parse(fs.readFileSync(pathto, 'utf8'));
-    }
-
-
-const Discord = require('discord.js');
+const Discord = require("discord.js")
 const client = new Discord.Client();
+const config = require("../config.json");
+const DB = require("simple-json-db");
+const db = new DB("./suggestions.json");
 
+client.on("ready", () => {
+  console.log(`${client.user.tag} ha sido encendido.`);
+});
 
-client.on('message', async (message) => {
-    if(message.author.bot || !message.guild)
-        return;
-    const args = message.content.trim().split(/ +/g);
-    switch (args[0]) {
-        case '!canal':
-            if(!message.member.hasPermission('MANAGE_GUILD')){
-                return;
-            }
-            if (!message.guild.channels.get(args[1]))
-                return message.channel.send('Debes proporcionar una ID de canal válida');
+client.on("message", async (message) => {
+  if (message.author.bot || !message.guild) return;
 
-            try {
-                if (toquery.svch[message.guild.id]) {
-                    await deletestring(message.guild.id, args, 1);
-                    return message.channel.send('Nuevo canal de sugerencias activado')
-                }
-            }catch (e) {
-                console.log(e);
-            }
+  const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
+  const command = args.shift().toLowerCase();
 
-            fs.appendFile(pathto, `\n  "${message.guild.id}": "${args[1]}"`, function (err) {
-                if (err) throw err;
-                loadfile();
-                message.channel.send('Nuevo canal de sugerencias activado');
-                console.log('!Saved at '+ message.guild.id);
-            });
+  const channel = message.guild.channels.get(config.channel);
+  if (!channel)
+    return message.channel.send("No se ha encontrado el canal para sugerencias.");
 
-            break;
+  const embed = new Discord.RichEmbed();
 
-        case '!sugerir':
-
-            try {
-                eval(!toquery.svch[message.guild.id])
-            }catch (e) {
-                console.log(e);
-                return message.channel.send('Añade el canal al que enviar las sugerencias con el comando: !canal {chID}')
-            }
-            let channel = message.guild.channels.get(toquery.svch[message.guild.id]);
-            if (!channel) {
-                await deletestring(message.guild.id);
-                return message.channel.send('Añade el canal al que enviar las sugerencias con el comando !canal {chID}')
-            }
-            if(!args[1]) {
-                return message.channel.send("Debes añadir un motivo a la sugerencia");
-            }
-            let sugerencia = args.slice(1).join(" ");
-            let sugData = {
-                user: message.author.tag,
-                userID: message.author.id,
-                messageID: message.id,
-                suggestion: sugerencia
-            }
-            let regSug = JSON.stringify(sugData);
-             if(!fs.existsSync("suggestions.json"))
-            fs.appendFileSync("suggestions.json", regSug);
-            else
-            fs.appendFileSync("suggestions.json", ",\n" + regSug);
-            await console.log(sugerencia);
-            let embed = await new Discord.RichEmbed()
-                .setColor('#bfff00')
-                .setAuthor('Nueva Sugerencia')
-                .setDescription(sugerencia)
-                .setTimestamp()
-                .setFooter('Sugerido por: '+ message.author.username +'#'+ message.author.discriminator);
-
-            channel.send(embed).then(async sentmsg => {
-                await sentmsg.react('👍');
-                await sentmsg.react('👎');
-            });
-
-            break;
+  if (command === "sugerir") {
+      if (!args[0]) return message.channel.send("Debes introducir una sugerencia.");
+      embed
+        .setAuthor(message.author.tag, message.member.user.avatarURL)
+        .setTitle("Nueva Sugerencia")
+        .setColor("BLUE")
+        .addField("Sugerencia:", args.join(" "));
+      const mensaje = await channel.send(embed)
+      await mensaje.react("👍")
+      await mensaje.react("👎")
+      await message.react("✅")
+      db.set(mensaje.id, {
+        message_ID: message.id,
+        content: args.join(" "),
+        user: message.author.tag + " - " + message.author.id,
+        link: mensaje.url
+      });
     }
-}
-);
 
-function loadfile(){
-    file = YAML.parse(fs.readFileSync(pathto, 'utf8'));
-    toquery = JSON.parse(JSON.stringify(file));
-    console.log(toquery)
-}
-function deletestring(guildID,args, bool){
-    fs.readFile(pathto, {encoding: 'utf-8'}, function(err, data) {
-        if (err) throw error;
+    if(command === "aceptar") {
+      if(!message.member.roles.has(config.rol))
+      return;
+      if (!args[0] || !db.has(args[0]))
+        return message.channel.send(
+          "Debes introducir una ID de una sugerencia válida.");
+      const approvemessage = await channel.fetchMessage(args[0]);
+      if (!approvemessage)
+        return message.channel.send("No se ha encontrado la sugerencia.");
+      embed
+        .setAuthor(message.author.tag, message.member.user.avatarURL)
+        .setTitle("Sugerencia Aceptada")
+        .setColor("GREEN")
+        .addField("Sugerencia:", await db.get(args[0]).content);
+      if (args[1]) embed.addField("Razón:", args.slice(1).join(" "));
 
-        let dataArray = data.split('\n');
-        const searchKeyword = guildID;
-        let lastIndex = -1;
-
-        for (let index=0; index<dataArray.length; index++) {
-            if (dataArray[index].includes(searchKeyword)) {
-                lastIndex = index;
-                break;
-            }
+      const approveDone = await approvemessage
+        .edit(embed)
+        .then(() => true)
+        .catch(() => false);
+      if (!approveDone)
+        return message.channel.send(
+          "No he podido editar el mensaje, por favor, comprueba mis permisos.");
+      const approveUnreact = await approvemessage
+        .clearReactions()
+        .then(() => true)
+        .catch(() => false);
+      if (!approveUnreact)
+        return message.channel.send(
+          "No he podido quitar las reacciones del mensaje, por favor, comprueba mis permisos, necesito poder administrar mensajes.");
+          else {
+            message.react("✅");
         }
-        dataArray.splice(lastIndex, 1);
-        const updatedData = dataArray.join('\n');
-        fs.writeFile(pathto, updatedData, (err) => {
-            if (err) throw err;
-            console.log ('Successfully updated the file data');
-            if(!bool)
-                loadfile();
-            else{
-                fs.appendFile(pathto, `\n  "${guildID}": "${args[1]}"`, function (err) {
-                    if (err) throw err;
-                    loadfile();
-                    console.log('!Saved at '+ guildID);
-                });
-            }
-        });
-    });
+        }
+
+    if(command === "posible"){
+      if(!message.member.roles.has(config.rol))
+      return;
+      if (!args[0] || !db.has(args[0]))
+        return message.channel.send("Debes introducir una ID de una sugerencia válida.");
+      const possiblemessage = await channel.fetchMessage(args[0]);
+      if (!possiblemessage)
+        return message.channel.send("No se ha encontrado la sugerencia.");
+      embed
+        .setAuthor(message.author.tag, message.member.user.avatarURL)
+        .setTitle("Sugerencia Posible")
+        .setColor("#FFFF00")
+        .addField("Sugerencia:", await db.get(args[0]).content);
+        if (args[1]) embed.addField("Razón", args.slice(1).join(" "));
+
+      const possibleDone = await possiblemessage
+        .edit(embed)
+        .then(() => true)
+        .catch(() => false);
+      if (!possibleDone)
+        return message.channel.send(
+          "No he podido editar el mensaje, por favor, comprueba mis permisos."
+        );
+      const possibleUnreact = await possiblemessage
+        .clearReactions()
+        .then(() => true)
+        .catch(() => false);
+      if (!possibleUnreact)
+        return message.channel.send("No he podido quitar las reacciones del mensaje, por favor, comprueba mis permisos, necesito poder administrar mensajes.");
+      else {
+        message.react("✅");
+      }
+        }
+
+      if(command === "denegar") {
+        if(!message.member.roles.has(config.rol))
+        return;
+      if (!args[0] || !db.has(args[0]))
+        return message.channel.send("Debes introducir una ID de una sugerencia válida.");
+      const denymessage = await channel.fetchMessage(args[0]);
+      if (!denymessage)
+        return message.channel.send("No se ha encontrado la sugerencia.");
+      embed
+        .setAuthor(message.author.tag, message.member.user.avatarURL)
+        .setTitle("Sugerencia Denegada")
+        .setColor("RED")
+        .addField("Sugerencia:", await db.get(args[0]).content);
+      if (args[1]) embed.addField("Razón", args.slice(1).join(" "));
+
+      const denyDone = await denymessage
+        .edit(embed)
+        .then(() => true)
+        .catch(() => false);
+      if (!denyDone)
+        return message.channel.send(
+          "No he podido editar el mensaje, por favor, comprueba mis permisos."
+        );
+      const denyUnreact = await denymessage
+        .clearReactions()
+        .then(() => true)
+        .catch(() => false);
+      if (!denyUnreact)
+        return message.channel.send("No he podido quitar las reacciones del mensaje, por favor, comprueba mis permisos, necesito poder administrar mensajes.");
+        else {
+      message.react("✅");
+  }
 }
+});
 
-
-client.login(conf.token);
+client.login(config.token);
