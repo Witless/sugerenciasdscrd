@@ -23,7 +23,7 @@ client.on("message", async (message) => {
   if (command === "sugerir") {
       if (!args[0]) return message.channel.send("Debes introducir una sugerencia.");
       embed
-        .setAuthor(message.author.tag, message.member.user.avatarURL)
+        .setAuthor(message.author.tag + " - " + message.author.id, message.member.user.avatarURL)
         .setTitle("Nueva Sugerencia")
         .setColor("BLUE")
         .addField("Sugerencia:", args.join(" "));
@@ -34,6 +34,7 @@ client.on("message", async (message) => {
       db.set(mensaje.id, {
         message_ID: message.id,
         content: args.join(" "),
+        avatar: message.member.user.avatarURL,
         user: message.author.tag + " - " + message.author.id,
         link: mensaje.url
       });
@@ -49,7 +50,7 @@ client.on("message", async (message) => {
       if (!approvemessage)
         return message.channel.send("No se ha encontrado la sugerencia.");
       embed
-        .setAuthor(message.author.tag, message.member.user.avatarURL)
+        .setAuthor(await db.get(args[0]).user, await db.get(args[0]).avatar)
         .setTitle("Sugerencia Aceptada")
         .setColor("GREEN")
         .addField("Sugerencia:", await db.get(args[0]).content);
@@ -83,7 +84,7 @@ client.on("message", async (message) => {
       if (!possiblemessage)
         return message.channel.send("No se ha encontrado la sugerencia.");
       embed
-        .setAuthor(message.author.tag, message.member.user.avatarURL)
+        .setAuthor(await db.get(args[0]).user, await db.get(args[0]).avatar)
         .setTitle("Sugerencia Posible")
         .setColor("#FFFF00")
         .addField("Sugerencia:", await db.get(args[0]).content);
@@ -117,7 +118,7 @@ client.on("message", async (message) => {
       if (!denymessage)
         return message.channel.send("No se ha encontrado la sugerencia.");
       embed
-        .setAuthor(message.author.tag, message.member.user.avatarURL)
+        .setAuthor(await db.get(args[0]).user, await db.get(args[0]).avatar)
         .setTitle("Sugerencia Denegada")
         .setColor("RED")
         .addField("Sugerencia:", await db.get(args[0]).content);
