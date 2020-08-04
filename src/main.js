@@ -50,13 +50,13 @@ client.on("message", async (msg) => {
         .setTitle("Nueva Sugerencia")
         .setColor("BLUE")
         .setDescription(args.join(" "));
-      const message = await channel.send(embed);
-      await message.react("👍");
-      await message.react("👎");
-      db.set(message.id, {
-        message: message.id,
+      const aMessage = await channel.send(embed);
+      await aMessage.react("👍");
+      await aMessage.react("👎");
+      db.set(aMessage.id, {
+        message: aMessage.id,
         content: args.join(" "),
-        user: message.author.id,
+        user: aMessage.author.id,
       });
       break;
 
