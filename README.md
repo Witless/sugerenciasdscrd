@@ -17,6 +17,7 @@ servidor de Discord
 Recuerda usar delante del comando el prefix configurado.
 
 - **sugerir {Contenido de la Sugerencia}** | Manda la sugerencia.
+- **asugerir {Contenido de la Sugerencia}** | Manda la sugerencia anónimamente.
 - **aceptar {ID del Mensaje} [Razón]** | Acepta la sugerencia.
 - **posible {ID del Mensaje} [Razón]** | Marca la sugerencia como posible.
 - **rechazar {ID del Mensaje} [Razón]** | Rechaza la sugerencia.
