@@ -44,6 +44,8 @@ client.on("message", async (msg) => {
       break;
 
     case "aceptar":
+      if (!msg.member.hasPermission("MANAGE_MESSAGES")
+          return;
       if (!args[0] || !db.has(args[0]))
         return msg.channel.send(
           "Debes introducir una ID de una sugerencia válida."
@@ -79,6 +81,8 @@ client.on("message", async (msg) => {
       break;
 
     case "posible":
+      if (!msg.member.hasPermission("MANAGE_MESSAGES")
+          return;
       if (!args[0] || !db.has(args[0]))
         return msg.channel.send(
           "Debes introducir una ID de una sugerencia válida."
@@ -114,6 +118,8 @@ client.on("message", async (msg) => {
       break;
 
     case "rechazar":
+      if (!msg.member.hasPermission("MANAGE_MESSAGES")
+          return;
     case "denegar":
       if (!args[0] || !db.has(args[0]))
         return msg.channel.send(
