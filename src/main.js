@@ -42,6 +42,23 @@ client.on("message", async (msg) => {
         user: message.author.id,
       });
       break;
+      
+    case "asugerir":
+      if (!args[0]) return msg.channel.send("Debes introducir una sugerecnia.");
+      embed
+        .setAuthor("Anónimo")
+        .setTitle("Nueva Sugerencia")
+        .setColor("BLUE")
+        .setDescription(args.join(" "));
+      const message = await channel.send(embed);
+      await message.react("👍");
+      await message.react("👎");
+      db.set(message.id, {
+        message: message.id,
+        content: args.join(" "),
+        user: message.author.id,
+      });
+      break;
 
     case "aceptar":
       if (!msg.member.hasPermission("MANAGE_MESSAGES"))
