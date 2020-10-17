@@ -19,7 +19,8 @@
   },
   "homepage": "https://github.com/Witless/sugerenciasdscrd#readme",
   "dependencies": {
-    "discord.js": "^12.2.0",
-    "simple-json-db": "^1.2.2"
-  }
+    "discord.js": "^12.3.1"
+  },
+  "devDependencies": {},
+  "keywords": []
 }
