@@ -1,0 +1,26 @@
+{
+  "name": "sugerenciasdscrd",
+  "version": "1.0.1",
+  "description": "Bot de sugerencias.",
+  "main": "src/main.js",
+  "scripts": {
+    "run": "node src/main.js",
+    "windows": "windows.cmd",
+    "linux": "bash linux.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Witless/sugerenciasdscrd.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Witless/sugerenciasdscrd/issues"
+  },
+  "homepage": "https://github.com/Witless/sugerenciasdscrd#readme",
+  "dependencies": {
+    "discord.js": "^12.3.1"
+  },
+  "devDependencies": {},
+  "keywords": []
+}
