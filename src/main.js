@@ -4,20 +4,20 @@ const config = require("../config.json");
 const fs = require("fs")
 
 client.commands = new Discord.Collection()
-let files = fs.readdirSync("./commands").filter((f) => f.endsWith(".js"))    
+let files = fs.readdirSync("./commands").filter((f) => f.endsWith(".js"))
 
 for (var fil of files) {
- let commandFile = require("../commands/" + fil)
- client.commands.set(commandFile.name, commandFile)
- console.log("Comandos cargados")
+  let commandFile = require("../commands/" + fil)
+  client.commands.set(commandFile.name, commandFile)
+  console.log("Comandos cargados")
 }
 
-client.on("ready", () => {
-  console.log(`${client.user.tag} ha sido encendido.`);
-});
+client.on("ready",
+          () => { console.log(`${client.user.tag} ha sido encendido.`); });
 
 client.on("message", async (message) => {
-  if (message.author.bot || !message.guild) return;
+  if (message.author.bot || !message.guild)
+    return;
 
   const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
   const command = args.shift().toLowerCase();
@@ -27,7 +27,7 @@ client.on("message", async (message) => {
 
   let cmd = client.commands.get(command)
   if (cmd) {
-   cmd.run(client, message, args, channel, pre_channel)
+    cmd.run(client, message, args, channel, pre_channel)
   }
 });
 
