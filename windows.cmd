@@ -20,7 +20,7 @@ echo   "rol": "%role_id%", >> config.json
 
 echo ID del canal al que iran las sugerencias al ser enviadas:
 set /p pre_channel=""
-echo   "pre_channel": "%pre_channel%", >> config.json
+echo   "pre_channel": "%pre_channel%" >> config.json
 
 echo } >> config.json
 echo Archivo de configuracion correctamente creado.
